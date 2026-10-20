@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f0e6">
+  <title>Palavra do dia — painel de protótipos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f4f0e6;
+      --surface: #fffdf7;
+      --surface-2: #ece8dd;
+      --ink: #18332f;
+      --muted: #62706a;
+      --line: #d8d5c9;
+      --accent: #d75b45;
+      --accent-2: #3d73c8;
+      --good: #28694e;
+      --present: #9b5d10;
+      --absent: #66716e;
+      --focus: #125bd1;
+      --shadow: 0 16px 45px rgb(24 51 47 / 8%);
+      --text-scale: 1;
+      --body-font: "DM Sans", sans-serif;
+      --display-font: "DM Serif Display", Georgia, serif;
+      --mono-font: "IBM Plex Mono", monospace;
+      font-family: var(--body-font);
+      font-size: calc(16px * var(--text-scale));
+      background: var(--page);
+      color: var(--ink);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background-color: var(--page);
+      background-image: radial-gradient(rgb(24 51 47 / 3%) .6px, transparent .6px);
+      background-size: 9px 9px;
+      color: var(--ink);
+      transition: background-color .2s ease, color .2s ease;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+    .shell { width: min(1400px, calc(100% - 56px)); margin: 0 auto; }
+    .masthead {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: 0; }
+    .brand-mark {
+      width: 34px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      color: var(--surface);
+      font-family: var(--mono-font);
+      font-size: .9rem;
+      transform: rotate(-4deg);
+    }
+    .brand span:last-child { font-size: .94rem; }
+    .prototype-label {
+      margin-left: 7px;
+      padding-left: 15px;
+      border-left: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 500;
+    }
+    .utilities { display: flex; align-items: center; gap: 10px; }
+    .utility-group { display: flex; align-items: center; gap: 4px; }
+    .utility-label { margin-right: 4px; color: var(--muted); font-size: .77rem; }
+    .icon-button, .mode-button {
+      min-width: 38px;
+      min-height: 38px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .icon-button:hover, .mode-button:hover { border-color: var(--ink); }
+    .mode-button { min-width: 122px; font-size: .82rem; }
+
+    .intro {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 29px 0 19px;
+    }
+    .eyebrow { margin: 0 0 5px; color: var(--accent); font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+    h1 { margin: 0; font-family: var(--display-font); font-size: clamp(2rem, 1rem + 2vw, 2.8rem); font-weight: 400; line-height: 1.03; }
+    .intro-note { max-width: 450px; margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+
+    .direction-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 17px;
+      border-bottom: 1px solid var(--line);
+    }
+    .direction-tabs { display: flex; gap: 4px; overflow-x: auto; }
+    .direction-tab {
+      min-height: 48px;
+      padding: 0 15px;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .direction-tab[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--ink); font-weight: 700; }
+    .direction-caption { color: var(--muted); font-size: .79rem; white-space: nowrap; }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(190px, 228px) minmax(400px, 1fr) minmax(228px, 282px);
+      min-height: 592px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .progress-panel, .clue-panel { padding: 25px 22px; }
+    .progress-panel { border-right: 1px solid var(--line); }
+    .clue-panel { border-left: 1px solid var(--line); }
+    .panel-kicker { margin: 0 0 16px; color: var(--muted); font-size: .7rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+    .daily-theme { margin: 0 0 4px; font-size: 1.04rem; font-weight: 700; }
+    .daily-date { margin: 0 0 23px; color: var(--muted); font-size: .82rem; }
+    .level-list { display: grid; gap: 4px; }
+    .level-item {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      align-items: center;
+      min-height: 37px;
+      gap: 8px;
+      padding: 3px 6px;
+      border: 0;
+      border-left: 3px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      font-size: .83rem;
+    }
+    .level-item.current { border-left-color: var(--accent); background: var(--surface-2); color: var(--ink); font-weight: 700; }
+    .level-item.done .level-number { background: var(--good); color: white; }
+    .level-item.locked { opacity: .55; }
+    .level-number {
+      width: 27px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      font-family: var(--mono-font);
+      font-size: .7rem;
+    }
+    .level-state { font-size: .68rem; }
+    .progress-foot { margin: 18px 0 0; color: var(--muted); font-size: .77rem; line-height: 1.45; }
+
+    .play-panel { padding: 28px clamp(24px, 4vw, 58px) 26px; }
+    .play-topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .level-tag { color: var(--accent); font-family: var(--mono-font); font-size: .75rem; font-weight: 600; }
+    .attempt-counter { color: var(--muted); font-family: var(--mono-font); font-size: .78rem; }
+    h2 { margin: 13px 0 6px; font-family: var(--display-font); font-size: 2rem; font-weight: 400; line-height: 1.12; }
+    .word-meta { margin: 0; color: var(--muted); font-size: .84rem; }
+    .word-grid { display: grid; gap: 7px; margin: 25px auto 19px; }
+    .guess-row { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)) 104px; gap: 6px; align-items: center; }
+    .tile {
+      min-width: 0;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-family: var(--mono-font);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .tile.correct { border-color: var(--good); background: var(--good); color: #fff; }
+    .tile.present { border-color: var(--present); background: #f6dfb6; color: #3e2d15; }
+    .tile.absent { border-color: #d8deda; background: #e5e9e6; color: #34443d; }
+    .tile-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .semantic-tag { padding-left: 6px; color: var(--muted); font-size: .67rem; line-height: 1.1; }
+    .semantic-tag strong { display: block; margin-top: 3px; color: var(--ink); font-size: .7rem; font-weight: 700; }
+    .guess-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 9px; }
+    .guess-input { min-width: 0; min-height: 48px; padding: 0 13px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+    .submit-button { min-height: 48px; padding: 0 17px; border: 1px solid var(--ink); background: var(--ink); color: white; font-size: .86rem; font-weight: 700; cursor: pointer; }
+    .submit-button:hover { filter: brightness(1.2); }
+    .input-message { min-height: 23px; margin: 7px 0 0; color: var(--muted); font-size: .78rem; }
+    .turn-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 13px; color: var(--muted); font-size: .76rem; }
+    .turn-foot strong { color: var(--ink); }
+
+    .semantic-box { padding-bottom: 19px; border-bottom: 1px solid var(--line); }
+    .semantic-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .semantic-title h3, .hint-box h3, .access-note h3 { margin: 0; font-size: .92rem; }
+    .semantic-title span { color: var(--muted); font-size: .7rem; }
+    .semantic-scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 13px 0 7px; }
+    .semantic-segment { height: 7px; background: var(--surface-2); }
+    .semantic-segment.active { background: var(--accent-2); }
+    .semantic-summary { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: .71rem; }
+    .semantic-summary strong { color: var(--ink); }
+    .hint-box { padding: 19px 0; border-bottom: 1px solid var(--line); }
+    .hint-copy { margin: 7px 0 12px; color: var(--muted); font-size: .79rem; line-height: 1.45; }
+    .hint-button { width: 100%; min-height: 40px; padding: 8px 10px; border: 1px solid var(--line); background: transparent; text-align: left; font-size: .79rem; font-weight: 600; cursor: pointer; }
+    .hint-button:disabled { cursor: not-allowed; opacity: .68; }
+    .hint-button:not(:disabled):hover { border-color: var(--accent); }
+    .hint-result { margin: 9px 0 0; color: var(--ink); font-size: .82rem; font-weight: 700; }
+    .access-note { padding-top: 18px; }
+    .access-note p { margin: 7px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.5; }
+
+    .prototype-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 13px 0 30px;
+      color: var(--muted);
+      font-size: .74rem;
+      line-height: 1.5;
+    }
+    .prototype-foot p { margin: 0; }
+    .prototype-foot a { color: var(--ink); text-underline-offset: 3px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    body[data-direction="arcade"] {
+      color-scheme: dark;
+      --page: #161a17;
+      --surface: #202722;
+      --surface-2: #303a32;
+      --ink: #f2f0e8;
+      --muted: #b1bdb4;
+      --line: #465148;
+      --accent: #c8f169;
+      --accent-2: #53c7d3;
+      --good: #277e5a;
+      --present: #e3a44f;
+      --absent: #455149;
+      --focus: #efff80;
+      --shadow: 0 16px 48px rgb(0 0 0 / 22%);
+      --body-font: "Space Grotesk", sans-serif;
+      --display-font: "Space Grotesk", sans-serif;
+      --mono-font: "IBM Plex Mono", monospace;
+    }
+    body[data-direction="arcade"] .brand-mark { background: var(--accent); color: #182016; transform: none; }
+    body[data-direction="arcade"] h1, body[data-direction="arcade"] h2 { font-weight: 700; }
+    body[data-direction="arcade"] .direction-tab[aria-selected="true"] { border-bottom-color: var(--accent); }
+    body[data-direction="arcade"] .tile.present { background: #61491f; color: #fff1d7; }
+    body[data-direction="arcade"] .tile.absent { background: #354139; color: #e0e8e1; }
+    body[data-direction="arcade"] .semantic-segment.active { background: var(--accent-2); }
+    body[data-direction="arcade"] .submit-button { color: #192115; }
+    body[data-direction="arcade"][data-theme="light"] {
+      color-scheme: light;
+      --page: #edf0eb;
+      --surface: #fcfdf9;
+      --surface-2: #e4e9e1;
+      --ink: #1b251d;
+      --muted: #526058;
+      --line: #c4cec3;
+      --accent: #486f0c;
+      --accent-2: #087887;
+      --good: #287850;
+      --present: #9b5d10;
+      --absent: #66716a;
+      --focus: #125bd1;
+      --shadow: 0 16px 45px rgb(24 51 47 / 8%);
+    }
+    body[data-direction="arcade"][data-theme="light"] .brand-mark { background: var(--ink); color: #fff; }
+    body[data-direction="arcade"][data-theme="light"] .tile.present { background: #f6dfb6; color: #3e2d15; }
+    body[data-direction="arcade"][data-theme="light"] .tile.absent { background: #e5e9e6; color: #34443d; }
+    body[data-direction="arcade"][data-theme="light"] .submit-button { color: #fff; }
+
+    body[data-direction="atlas"] {
+      --page: #e8efeb;
+      --surface: #f7faf7;
+      --surface-2: #e1ebe6;
+      --ink: #173b3a;
+      --muted: #526a66;
+      --line: #c9d8d1;
+      --accent: #bd573f;
+      --accent-2: #4278b8;
+      --good: #28694e;
+      --present: #916017;
+      --absent: #60716b;
+      --focus: #125bd1;
+      --shadow: 0 16px 45px rgb(23 59 58 / 8%);
+      --body-font: "Source Sans 3", sans-serif;
+      --display-font: "Sora", sans-serif;
+      --mono-font: "IBM Plex Mono", monospace;
+    }
+    body[data-direction="atlas"] {
+      background-image: repeating-linear-gradient(154deg, transparent 0 47px, rgb(23 59 58 / 4%) 48px, transparent 49px 81px), repeating-linear-gradient(24deg, transparent 0 61px, rgb(23 59 58 / 3%) 62px, transparent 63px 99px);
+      background-size: 100% 100%;
+    }
+    body[data-direction="atlas"] .game-layout { border-radius: 18px; }
+    body[data-direction="atlas"] .progress-panel, body[data-direction="atlas"] .clue-panel { background: rgb(225 235 230 / 45%); }
+    body[data-direction="atlas"] .brand-mark { border-radius: 50% 50% 50% 3px; background: var(--accent-2); transform: rotate(-45deg); }
+    body[data-direction="atlas"] .brand-mark span { transform: rotate(45deg); }
+    body[data-direction="atlas"] h1, body[data-direction="atlas"] h2 { font-weight: 600; }
+    body[data-direction="atlas"] .level-item.current { border-radius: 0 12px 12px 0; }
+
+    body[data-theme="dark"][data-direction="editorial"] {
+      color-scheme: dark;
+      --page: #202420;
+      --surface: #292f2a;
+      --surface-2: #363d36;
+      --ink: #f1eee5;
+      --muted: #b5bcb3;
+      --line: #485047;
+      --accent: #f08468;
+      --accent-2: #79a5ed;
+      --good: #35835f;
+      --present: #c58a39;
+      --absent: #49544d;
+      --focus: #a8c7ff;
+      --shadow: 0 16px 45px rgb(0 0 0 / 24%);
+    }
+    body[data-theme="dark"][data-direction="atlas"] {
+      color-scheme: dark;
+      --page: #1b2826;
+      --surface: #233431;
+      --surface-2: #304440;
+      --ink: #e7f0eb;
+      --muted: #afc1ba;
+      --line: #425a54;
+      --accent: #ec8a6d;
+      --accent-2: #77a8df;
+      --good: #398363;
+      --present: #bd8b43;
+      --absent: #43534d;
+      --focus: #a8c7ff;
+      --shadow: 0 16px 45px rgb(0 0 0 / 24%);
+      background-image: repeating-linear-gradient(154deg, transparent 0 47px, rgb(231 240 235 / 3%) 48px, transparent 49px 81px), repeating-linear-gradient(24deg, transparent 0 61px, rgb(231 240 235 / 2%) 62px, transparent 63px 99px);
+    }
+    body[data-theme="dark"] .tile.present { background: #604b2a; color: #fff1d7; }
+    body[data-theme="dark"] .tile.absent { background: #37423b; color: #e0e8e1; }
+    body[data-theme="dark"] .submit-button { color: #fff; }
+    body[data-theme="dark"][data-direction="arcade"] .submit-button { color: #192115; }
+
+    @media (max-width: 1050px) {
+      .shell { width: min(100% - 32px, 900px); }
+      .game-layout { grid-template-columns: 190px minmax(0, 1fr); }
+      .progress-panel { grid-row: span 2; }
+      .clue-panel { grid-column: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; border-top: 1px solid var(--line); border-left: 0; }
+      .semantic-box, .hint-box { padding: 0 0 14px; border-bottom: 0; }
+      .access-note { grid-column: 1 / -1; padding-top: 0; }
+    }
+    @media (max-width: 700px) {
+      .shell { width: min(100% - 22px, 560px); }
+      .masthead { min-height: 64px; }
+      .prototype-label, .utility-label, .direction-caption { display: none; }
+      .utilities { gap: 6px; }
+      .mode-button { min-width: auto; }
+      .intro { display: block; padding-top: 22px; }
+      .intro-note { margin-top: 11px; }
+      .direction-bar { align-items: start; }
+      .direction-tabs { width: 100%; }
+      .direction-tab { padding-inline: 10px; font-size: .83rem; }
+      .game-layout { grid-template-columns: 1fr; min-height: auto; }
+      .progress-panel { grid-row: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 17px; }
+      .daily-theme { display: inline; margin-right: 7px; }
+      .daily-date { display: inline; margin: 0; }
+      .panel-kicker { margin-bottom: 9px; }
+      .level-list { display: flex; overflow-x: auto; gap: 5px; padding: 2px 1px 5px; }
+      .level-item { flex: 0 0 39px; display: flex; justify-content: center; min-height: 39px; padding: 2px; border: 1px solid var(--line); }
+      .level-item.current { border: 2px solid var(--accent); }
+      .level-number { border: 0; }
+      .level-name, .level-state, .progress-foot { display: none; }
+      .play-panel { padding: 22px 17px; }
+      .clue-panel { grid-column: 1; grid-template-columns: 1fr; padding: 17px; }
+      .semantic-box { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+      .hint-box { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .access-note { grid-column: auto; }
+      .guess-row { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+      .semantic-tag { display: none; }
+      .tile { font-size: .84rem; }
+      .prototype-foot { display: block; }
+      .prototype-foot p + p { margin-top: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body data-direction="editorial" data-theme="light">
+  <header class="shell masthead">
+    <div class="brand" aria-label="Palavra do dia, painel de protótipos">
+      <span class="brand-mark"><span>P</span></span>
+      <span>PALAVRA DO DIA</span>
+      <span class="prototype-label">painel de protótipos</span>
+    </div>
+    <div class="utilities" aria-label="Preferências visuais">
+      <div class="utility-group" aria-label="Tamanho do texto">
+        <span class="utility-label">Texto</span>
+        <button class="icon-button" id="font-down" type="button" aria-label="Diminuir tamanho do texto" title="Diminuir texto">A−</button>
+        <button class="icon-button" id="font-up" type="button" aria-label="Aumentar tamanho do texto" title="Aumentar texto">A+</button>
+      </div>
+      <button class="mode-button" id="theme-toggle" type="button" aria-pressed="false">◐ Tema escuro</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Três direções visuais · uma mecânica</p>
+        <h1 id="page-title">Descobrir palavras.<br>Do seu jeito.</h1>
+      </div>
+      <p class="intro-note">Compare três caminhos para o mesmo desafio diário: uma revista de repertório, um placar arcade e um mapa de palavras.</p>
+    </section>
+
+    <nav class="direction-bar" aria-label="Selecionar direção visual">
+      <div class="direction-tabs" role="tablist" aria-label="Protótipos">
+        <button class="direction-tab" id="tab-editorial" type="button" role="tab" aria-selected="true" aria-controls="game-screen" data-direction="editorial">01 · Revista</button>
+        <button class="direction-tab" id="tab-arcade" type="button" role="tab" aria-selected="false" aria-controls="game-screen" data-direction="arcade" tabindex="-1">02 · Arcade</button>
+        <button class="direction-tab" id="tab-atlas" type="button" role="tab" aria-selected="false" aria-controls="game-screen" data-direction="atlas" tabindex="-1">03 · Cartografia</button>
+      </div>
+      <span class="direction-caption" id="direction-caption">Editorial · aprendizagem e repertório</span>
+    </nav>
+
+    <main class="game-layout" id="game-screen" role="tabpanel" aria-labelledby="tab-editorial">
+      <aside class="progress-panel" aria-label="Progresso do desafio">
+        <p class="panel-kicker">Desafio diário</p>
+        <p class="daily-theme">Trilha da natureza</p>
+        <p class="daily-date">13 de outubro · terça-feira</p>
+        <p class="panel-kicker">Seu percurso <span id="progress-count">3 de 10</span></p>
+        <nav class="level-list" id="level-list" aria-label="Dez níveis do desafio"></nav>
+        <p class="progress-foot">Sem sequência obrigatória. Seu progresso fica salvo neste navegador.</p>
+      </aside>
+
+      <section class="play-panel" aria-labelledby="level-title">
+        <div class="play-topline">
+          <span class="level-tag" id="level-tag">NÍVEL 04 / 10</span>
+          <span class="attempt-counter" id="attempt-counter">3 erros · 5 tentativas restantes</span>
+        </div>
+        <h2 id="level-title">Uma palavra, oito letras</h2>
+        <p class="word-meta">Tema de hoje: natureza <span aria-hidden="true">·</span> dificuldade em progressão</p>
+        <div class="word-grid" id="word-grid" role="log" aria-label="Histórico de tentativas" aria-live="polite"></div>
+        <form class="guess-form" id="guess-form" autocomplete="off">
+          <label class="sr-only" for="guess-input">Digite um palpite de oito letras</label>
+          <input class="guess-input" id="guess-input" name="guess" type="text" maxlength="8" minlength="8" placeholder="Digite uma palavra" aria-describedby="input-message" autocapitalize="characters" spellcheck="false" required>
+          <button class="submit-button" type="submit">Enviar palpite</button>
+        </form>
+        <p class="input-message" id="input-message" role="status" aria-live="polite">Palpites inválidos não consomem tentativas.</p>
+        <div class="turn-foot">
+          <span>Limite demonstrativo: <strong>8 tentativas por nível</strong></span>
+          <span>Progresso salvo localmente</span>
+        </div>
+      </section>
+
+      <aside class="clue-panel" aria-label="Pistas e opções">
+        <section class="semantic-box" aria-labelledby="semantic-heading">
+          <div class="semantic-title">
+            <h3 id="semantic-heading">Proximidade de significado</h3>
+            <span>pista textual + visual</span>
+          </div>
+          <div class="semantic-scale" aria-hidden="true">
+            <span class="semantic-segment"></span>
+            <span class="semantic-segment"></span>
+            <span class="semantic-segment active"></span>
+            <span class="semantic-segment active"></span>
+            <span class="semantic-segment"></span>
+          </div>
+          <div class="semantic-summary"><span>Mais distante</span><strong id="semantic-label">Chegando perto</strong></div>
+        </section>
+        <section class="hint-box" aria-labelledby="hint-heading">
+          <h3 id="hint-heading">Uma mãozinha?</h3>
+          <p class="hint-copy" id="hint-copy">A dica opcional aparece após cinco erros neste nível.</p>
+          <button class="hint-button" id="hint-button" type="button" disabled aria-describedby="hint-copy">Disponível após 5 erros · 2 restantes</button>
+          <p class="hint-result" id="hint-result" hidden></p>
+        </section>
+        <section class="access-note" aria-labelledby="access-heading">
+          <h3 id="access-heading">Pistas que não dependem só de cor</h3>
+          <p>Posição correta, letra presente e letra ausente também usam rótulos e padrões. Navegação por teclado, foco visível e texto ajustável.</p>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="prototype-foot">
+      <p>Protótipo interativo para avaliação visual. A escala semântica é demonstrativa; a fonte de significados e a validação lexical ainda precisam ser definidas.</p>
+      <p>Direção recomendada: <strong>Revista de repertório</strong>. <a href="PRD-jogo-palavras.md">Abrir PRD</a></p>
+    </footer>
+  </div>
+
+  <script>
+    const answer = "MONTANHA";
+    const initialGuesses = ["NATUREZA", "CAMINHOS", "PLANETAS"];
+    const semanticLabels = {
+      NATUREZA: "Relação ampla",
+      CAMINHOS: "No mesmo universo",
+      PLANETAS: "Mais distante",
+      AVENTURA: "Uma ideia próxima"
+    };
+    const directionCaptions = {
+      editorial: "Editorial · aprendizagem e repertório",
+      arcade: "Arcade · ritmo e leitura rápida",
+      atlas: "Cartografia · exploração semântica"
+    };
+    const body = document.body;
+    const grid = document.querySelector("#word-grid");
+    const form = document.querySelector("#guess-form");
+    const input = document.querySelector("#guess-input");
+    const message = document.querySelector("#input-message");
+    const attemptCounter = document.querySelector("#attempt-counter");
+    const hintButton = document.querySelector("#hint-button");
+    const hintCopy = document.querySelector("#hint-copy");
+    const hintResult = document.querySelector("#hint-result");
+    const semanticLabel = document.querySelector("#semantic-label");
+    const levelList = document.querySelector("#level-list");
+    const maxAttempts = 8;
+    let state = { guesses: initialGuesses.slice(), hintUsed: false, solved: false };
+
+    try {
+      const saved = JSON.parse(localStorage.getItem("palavra-prototype-state") || "null");
+      if (saved && Array.isArray(saved.guesses) && saved.guesses.every((word) => typeof word === "string" && word.length === 8)) {
+        state = { ...state, ...saved };
+      }
+      const savedDirection = localStorage.getItem("palavra-prototype-direction");
+      if (["editorial", "arcade", "atlas"].includes(savedDirection)) setDirection(savedDirection);
+      const savedTheme = localStorage.getItem("palavra-prototype-theme");
+      if (savedTheme === "dark") setTheme("dark");
+      const savedScale = Number(localStorage.getItem("palavra-prototype-text-scale"));
+      if (savedScale >= 0.9 && savedScale <= 1.15) document.documentElement.style.setProperty("--text-scale", savedScale);
+    } catch (error) {
+      // Local storage can be unavailable in private browsing; the demo remains playable for this tab.
+    }
+
+    function normalize(value) {
+      return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    }
+
+    function getStates(guess) {
+      const result = Array(guess.length).fill("absent");
+      const remaining = answer.split("");
+      const normalizedGuess = normalize(guess);
+      const normalizedAnswer = normalize(answer);
+      for (let index = 0; index < normalizedGuess.length; index += 1) {
+        if (normalizedGuess[index] === normalizedAnswer[index]) {
+          result[index] = "correct";
+          remaining[index] = "";
+        }
+      }
+      for (let index = 0; index < normalizedGuess.length; index += 1) {
+        if (result[index] === "correct") continue;
+        const foundIndex = remaining.indexOf(normalizedGuess[index]);
+        if (foundIndex !== -1) {
+          result[index] = "present";
+          remaining[foundIndex] = "";
+        }
+      }
+      return result;
+    }
+
+    function renderLevels() {
+      levelList.replaceChildren();
+      for (let index = 1; index <= 10; index += 1) {
+        const item = document.createElement("div");
+        item.className = `level-item ${index < 4 ? "done" : index === 4 ? "current" : "locked"}`;
+        item.setAttribute("aria-label", index < 4 ? `Nível ${index}, concluído` : index === 4 ? "Nível 4, atual" : `Nível ${index}, bloqueado`);
+        if (index === 4) item.setAttribute("aria-current", "step");
+        const number = document.createElement("span");
+        number.className = "level-number";
+        number.textContent = index < 4 ? "✓" : String(index).padStart(2, "0");
+        const name = document.createElement("span");
+        name.className = "level-name";
+        name.textContent = index === 4 ? "O relevo" : index < 4 ? ["Folhas", "Sementes", "Florestas"][index - 1] : "Próxima palavra";
+        const status = document.createElement("span");
+        status.className = "level-state";
+        status.textContent = index < 4 ? "feito" : index === 4 ? "agora" : "🔒";
+        item.append(number, name, status);
+        levelList.append(item);
+      }
+    }
+
+    function render() {
+      grid.replaceChildren();
+      state.guesses.forEach((guess, guessIndex) => {
+        const row = document.createElement("div");
+        row.className = "guess-row";
+        row.setAttribute("aria-label", `Palpite ${guessIndex + 1}: ${guess}`);
+        const states = getStates(guess);
+        [...guess].forEach((letter, index) => {
+          const tile = document.createElement("span");
+          tile.className = `tile ${states[index]}`;
+          tile.textContent = letter;
+          const label = document.createElement("span");
+          label.className = "tile-label";
+          label.textContent = states[index] === "correct" ? "letra correta na posição certa" : states[index] === "present" ? "letra presente em outra posição" : "letra não encontrada";
+          tile.append(label);
+          row.append(tile);
+        });
+        const semantic = document.createElement("span");
+        semantic.className = "semantic-tag";
+        semantic.textContent = "Significado";
+        const detail = document.createElement("strong");
+        detail.textContent = semanticLabels[guess] || "Pista demonstrativa";
+        semantic.append(detail);
+        row.append(semantic);
+        grid.append(row);
+      });
+
+      const errors = state.guesses.filter((word) => normalize(word) !== normalize(answer)).length;
+      const remaining = Math.max(0, maxAttempts - state.guesses.length);
+      attemptCounter.textContent = `${errors} erros · ${remaining} tentativas restantes`;
+      document.querySelector("#progress-count").textContent = state.solved ? "4 de 10" : "3 de 10";
+      hintButton.disabled = errors < 5 || state.hintUsed || state.solved;
+      hintButton.textContent = state.hintUsed ? "Sinônimo revelado" : errors >= 5 ? "Ver sinônimo · opcional" : `Disponível após 5 erros · ${Math.max(0, 5 - errors)} restantes`;
+      hintCopy.textContent = errors >= 5 ? "Você pode pedir um sinônimo sem interromper a partida." : "A dica opcional aparece após cinco erros neste nível.";
+      semanticLabel.textContent = semanticLabels[state.guesses.at(-1)] || "Siga investigando";
+      if (state.solved) {
+        message.textContent = "Você encontrou a palavra: MONTANHA. O próximo nível foi desbloqueado nesta demonstração.";
+        input.disabled = true;
+        form.querySelector("button").disabled = true;
+      } else if (state.guesses.length >= maxAttempts) {
+        message.textContent = "As tentativas deste nível acabaram. A resposta era MONTANHA.";
+        input.disabled = true;
+        form.querySelector("button").disabled = true;
+      }
+      try { localStorage.setItem("palavra-prototype-state", JSON.stringify(state)); } catch (error) { /* Ignore unavailable storage. */ }
+    }
+
+    function setDirection(direction) {
+      body.dataset.direction = direction;
+      document.querySelectorAll(".direction-tab").forEach((tab) => {
+        const selected = tab.dataset.direction === direction;
+        tab.setAttribute("aria-selected", String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+      });
+      document.querySelector("#direction-caption").textContent = directionCaptions[direction];
+      document.querySelector("#game-screen").setAttribute("aria-labelledby", `tab-${direction}`);
+      try { localStorage.setItem("palavra-prototype-direction", direction); } catch (error) { /* Ignore unavailable storage. */ }
+    }
+
+    function setTheme(theme) {
+      body.dataset.theme = theme;
+      const dark = theme === "dark";
+      const button = document.querySelector("#theme-toggle");
+      button.setAttribute("aria-pressed", String(dark));
+      button.textContent = dark ? "☼ Tema claro" : "◐ Tema escuro";
+      try { localStorage.setItem("palavra-prototype-theme", theme); } catch (error) { /* Ignore unavailable storage. */ }
+    }
+
+    document.querySelectorAll(".direction-tab").forEach((tab) => {
+      tab.addEventListener("click", () => setDirection(tab.dataset.direction));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const tabs = [...document.querySelectorAll(".direction-tab")];
+        const current = tabs.indexOf(tab);
+        const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+        tabs[next].focus();
+        setDirection(tabs[next].dataset.direction);
+      });
+    });
+
+    document.querySelector("#theme-toggle").addEventListener("click", () => setTheme(body.dataset.theme === "dark" ? "light" : "dark"));
+    document.querySelector("#font-down").addEventListener("click", () => changeTextScale(-0.05));
+    document.querySelector("#font-up").addEventListener("click", () => changeTextScale(0.05));
+
+    function changeTextScale(amount) {
+      const current = Number(getComputedStyle(document.documentElement).getPropertyValue("--text-scale")) || 1;
+      const next = Math.min(1.15, Math.max(0.9, Math.round((current + amount) * 100) / 100));
+      document.documentElement.style.setProperty("--text-scale", next);
+      try { localStorage.setItem("palavra-prototype-text-scale", String(next)); } catch (error) { /* Ignore unavailable storage. */ }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const guess = normalize(input.value.trim());
+      if (!/^[A-Z]{8}$/.test(guess)) {
+        message.textContent = "Digite uma palavra de oito letras. Essa entrada não consumiu tentativa.";
+        input.focus();
+        return;
+      }
+      if (state.guesses.some((word) => normalize(word) === guess)) {
+        message.textContent = "Esse palpite já apareceu no histórico.";
+        input.focus();
+        return;
+      }
+      state.guesses.push(guess);
+      if (guess === answer) state.solved = true;
+      message.textContent = semanticLabels[guess] ? `Palpite registrado. Relação demonstrativa: ${semanticLabels[guess]}.` : "Palpite registrado. A pista semântica real depende da lista de significados do jogo.";
+      input.value = "";
+      render();
+      if (!state.solved && state.guesses.length < maxAttempts) input.focus();
+    });
+
+    hintButton.addEventListener("click", () => {
+      state.hintUsed = true;
+      hintResult.hidden = false;
+      hintResult.textContent = "Sinônimo demonstrativo: monte.";
+      render();
+    });
+
+    renderLevels();
+    render();
+  </script>
+</body>
+</html>

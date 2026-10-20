@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-20",
+  "locale": "pt-BR",
+  "timezone": "America/Sao_Paulo",
+  "theme": {
+    "id": "natureza",
+    "title": "Trilha da natureza"
+  },
+  "attemptLimit": 8,
+  "hintAfterErrors": 5,
+  "acceptedWords": [
+    "SOL", "LUA", "MAR", "RIO", "CEU", "LUZ", "CALOR", "MEL", "LAR", "SAL", "AR",
+    "BRILHO", "NOITE", "MARE", "SATELITE", "FLOR", "MATA", "ROSA", "LAGO", "RAIZ",
+    "FOLHA", "PENA", "ROCHA", "PLANTA", "ARVORE", "JARDIM", "PETALA", "PERFUME", "SELVA",
+    "CHUVA", "VENTO", "CAMPO", "PEDRA", "PRAIA", "NUVEM", "MONTE", "TERRA",
+    "CLIMA", "AGUA", "GAROA", "TROVAO", "BRISA", "RAJADA", "NUVENS", "TRILHA",
+    "BOSQUE", "PASSEIO", "FOLHAS", "PLANTAS", "ANIMAL", "NEBLINA", "MARTE",
+    "PLANETA", "ESTRELA", "CAMINHO", "NATUREZA", "AVENTURA", "MONTANHA",
+    "FLORESTA", "CACHOEIRA", "ORBITA", "ESPACO"
+  ],
+  "levels": [
+    {
+      "id": "nivel-01",
+      "title": "O calor que ilumina",
+      "answer": "SOL",
+      "definition": "Estrela que ilumina e aquece a Terra.",
+      "example": "O sol apareceu entre as nuvens depois da chuva.",
+      "hintSynonym": "astro-rei",
+      "semanticIndex": { "LUA": 4, "LUZ": 5, "CALOR": 4, "ESTRELA": 5, "BRILHO": 4, "CÉU": 3 }
+    },
+    {
+      "id": "nivel-02",
+      "title": "O satélite da noite",
+      "answer": "LUA",
+      "definition": "Satélite natural que orbita a Terra e pode ser visto no céu noturno.",
+      "example": "A lua cheia clareou a trilha durante a noite.",
+      "hintSynonym": "satélite natural",
+      "semanticIndex": { "SOL": 4, "CÉU": 4, "NOITE": 4, "ESTRELA": 3, "MARÉ": 3, "SATÉLITE": 5 }
+    },
+    {
+      "id": "nivel-03",
+      "title": "Cor e perfume no jardim",
+      "answer": "FLOR",
+      "definition": "Parte de uma planta que, em muitas espécies, contém os órgãos de reprodução.",
+      "example": "Uma flor amarela nasceu no meio do jardim.",
+      "hintSynonym": "rosa",
+      "semanticIndex": { "PLANTA": 5, "JARDIM": 4, "PÉTALA": 5, "ROSA": 4, "FOLHA": 3, "PERFUME": 3 }
+    },
+    {
+      "id": "nivel-04",
+      "title": "Onde a vegetação cresce",
+      "answer": "MATA",
+      "definition": "Área coberta por árvores e outras plantas; floresta.",
+      "example": "Os pássaros fizeram ninho no alto da mata.",
+      "hintSynonym": "floresta",
+      "semanticIndex": { "FLORESTA": 5, "BOSQUE": 5, "ÁRVORE": 4, "PLANTA": 4, "SELVA": 5, "TRILHA": 3 }
+    },
+    {
+      "id": "nivel-05",
+      "title": "Água que cai do céu",
+      "answer": "CHUVA",
+      "definition": "Precipitação de gotas de água que caem das nuvens.",
+      "example": "A chuva refrescou o ar no fim da tarde.",
+      "hintSynonym": "precipitação",
+      "semanticIndex": { "NUVEM": 4, "ÁGUA": 4, "TEMPESTADE": 4, "GAROA": 5, "TROVÃO": 3, "VENTO": 3 }
+    },
+    {
+      "id": "nivel-06",
+      "title": "Ar em movimento",
+      "answer": "VENTO",
+      "definition": "Movimento natural do ar em relação à superfície terrestre.",
+      "example": "O vento balançava as folhas das árvores.",
+      "hintSynonym": "brisa",
+      "semanticIndex": { "BRISA": 5, "AR": 4, "FOLHA": 3, "TEMPESTADE": 4, "RAJADA": 5, "CLIMA": 3 }
+    },
+    {
+      "id": "nivel-07",
+      "title": "Pequenas gotas suspensas",
+      "answer": "NUVENS",
+      "definition": "Conjunto visível de gotículas de água ou cristais de gelo suspensos na atmosfera.",
+      "example": "As nuvens cobriram o céu antes do anoitecer.",
+      "hintSynonym": "nimbos",
+      "semanticIndex": { "CÉU": 4, "CHUVA": 5, "ATMOSFERA": 4, "NEBLINA": 3, "TROVÃO": 3, "TEMPESTADE": 4 }
+    },
+    {
+      "id": "nivel-08",
+      "title": "Caminho em meio à natureza",
+      "answer": "TRILHA",
+      "definition": "Caminho estreito, geralmente aberto em uma área natural.",
+      "example": "Seguimos a trilha até uma clareira na mata.",
+      "hintSynonym": "caminho",
+      "semanticIndex": { "CAMINHO": 5, "FLORESTA": 4, "MATA": 4, "PASSEIO": 3, "AVENTURA": 3, "SENDERISMO": 4 }
+    },
+    {
+      "id": "nivel-09",
+      "title": "Um mundo no espaço",
+      "answer": "PLANETA",
+      "definition": "Corpo celeste que orbita uma estrela e não possui luz própria.",
+      "example": "A Terra é o planeta onde vivemos.",
+      "hintSynonym": "corpo celeste",
+      "semanticIndex": { "TERRA": 5, "MARTE": 5, "ESTRELA": 3, "ÓRBITA": 4, "SATÉLITE": 4, "ESPAÇO": 4 }
+    },
+    {
+      "id": "nivel-10",
+      "title": "Um ecossistema entre árvores",
+      "answer": "FLORESTA",
+      "definition": "Grande extensão de terreno coberta principalmente por árvores e vegetação.",
+      "example": "A floresta abriga muitas espécies de animais e plantas.",
+      "hintSynonym": "bosque",
+      "semanticIndex": { "MATA": 5, "BOSQUE": 5, "ÁRVORE": 4, "SELVA": 5, "PLANTA": 4, "TRILHA": 3 }
+    }
+  ]
+}
